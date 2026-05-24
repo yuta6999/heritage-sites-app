@@ -1263,13 +1263,36 @@ function nextTrip(selectedTag = null) {
 
     let nextItem;
     if (selectedTag) {
-        // 選択されたタグを持つ遺産（現在の遺産を除く）を抽出
-        const candidates = heritageData.filter(h => h.tags.includes(selectedTag) && h.name !== currentItem.name);
-        
-        // 繋がる遺産があればそこから選択、なければ全体からランダムに放浪
-        nextItem = candidates.length > 0 ? candidates[Math.floor(Math.random() * candidates.length)] : getRandomItem();
+        // 1. 全データから「選択されたタグを持ち」「まだ訪れておらず」「現在の遺産ではない」候補を抽出
+        // ※データ末尾の空文字タグ（""）対策として、h.tagsをチェックする前に空文字を除外
+        let candidates = heritageData.filter(h => {
+            const cleanTags = h.tags.filter(tag => tag !== "");
+            const isSelected = cleanTags.includes(selectedTag);
+            const isNotCurrent = h.name !== currentItem.name;
+            const isNotVisited = !tripLog.some(logged => logged.name === h.name);
+            return isSelected && isNotCurrent && isNotVisited;
+        });
+
+        if (candidates.length > 0) {
+            // 2. 【ループ脱出ロジック】候補の中から「現在の国とは異なる国」の遺産を優先抽出
+            const crossBorderCandidates = candidates.filter(h => h.country !== currentItem.country);
+            
+            if (crossBorderCandidates.length > 0) {
+                // 違う国へ行ける候補があれば、そこからランダムに選択（大ワープ）
+                nextItem = crossBorderCandidates[Math.floor(Math.random() * crossBorderCandidates.length)];
+            } else {
+                // 同じ国の候補しか残っていなければ、その中からランダムに選択
+                nextItem = candidates[Math.floor(Math.random() * candidates.length)];
+            }
+        } else {
+            // 繋がる未訪問の遺産が万が一全滅した場合は、全体からランダムに完全放浪
+            nextItem = getRandomItem();
+        }
+
+        // 現在の遺産と選択されたタグをログに記録して次へ
         tripLog.push({ name: currentItem.name, tag: selectedTag });
     } else {
+        // 初回スタート時は全体からランダム
         nextItem = getRandomItem();
     }
 
@@ -1279,16 +1302,18 @@ function nextTrip(selectedTag = null) {
     document.getElementById("current-step").innerText = currentStep;
     document.getElementById("heritage-name").innerText = currentItem.name;
     document.getElementById("heritage-english").innerText = currentItem.english;
-    document.getElementById("heritage-remarks").innerText = currentItem.remarks;
+    document.getElementById("heritage-remarks").innerText = currentItem.remarks || "（備考データなし）";
     document.getElementById("meta-country").innerText = currentItem.country;
     document.getElementById("meta-category").innerText = currentItem.category;
     document.getElementById("meta-year").innerText = currentItem.year;
     document.getElementById("meta-criteria").innerText = `(${currentItem.criteria})`;
 
-    // ハッシュタグボタンの生成（親指で押しやすい大きめのターゲット）
+    // ハッシュタグボタンの生成（空文字を除去して親指タッチゾーンへ配置）
     const tagsBox = document.getElementById("tags-box");
     tagsBox.innerHTML = "";
-    currentItem.tags.forEach(tag => {
+    
+    const validTags = currentItem.tags.filter(tag => tag !== "");
+    validTags.forEach(tag => {
         const btn = document.createElement("button");
         btn.className = "tag-btn";
         btn.innerText = `#${tag}`;
@@ -1300,7 +1325,13 @@ function nextTrip(selectedTag = null) {
     });
 }
 
+// 全体からまだ訪れていない遺産をランダムに取得する（フォールバック・初回用）
 function getRandomItem() {
+    const unvisited = heritageData.filter(h => !tripLog.some(logged => logged.name === h.name));
+    if (unvisited.length > 0) {
+        return unvisited[Math.floor(Math.random() * unvisited.length)];
+    }
+    // 万が一すべて訪問済みの場合は全体からランダム
     return heritageData[Math.floor(Math.random() * heritageData.length)];
 }
 
