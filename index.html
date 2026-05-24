@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tag trip - 世界遺産ハッシュタグの旅</title>
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+</head>
+<body>
+<div class="container">
+    <!-- 旅の途中画面 -->
+    <div id="trip-screen">
+        <div class="progress"><span id="current-step">1</span> / 10 STEPS</div>
+        <h1 id="heritage-name">読み込み中...</h1>
+        <div class="tags-container" id="tags-box"></div>
+    </div>
+
+    <!-- 旅の終わり（振り返り）画面 -->
+    <div id="result-screen" class="hidden">
+        <div class="progress">TRIP COMPLETED</div>
+        <h1>旅の記憶</h1>
+        <ul class="history-list" id="history-box"></ul>
+        <button class="share-btn" onclick="shareTrip()">旅の記憶をシェアする</button>
+    </div>
+</div>
+<script src="js/script.js"></script>
+</body>
+</html>
