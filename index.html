@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>tag trip - 世界遺産ハッシュタグの旅</title>
-    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -29,7 +29,7 @@
         </div>
 
         <div class="bottom-area">
-            <div class="zone-label">ハッシュタグを選んで次の旅へ</div>
+            <div id="zone-instruction" class="zone-label">ハッシュタグを選んで次の旅へ</div>
             <div class="tags-container" id="tags-box"></div>
         </div>
     </div>
@@ -42,7 +42,7 @@
             <ul class="history-list" id="history-box"></ul>
         </div>
         
-        <div class="bottom-area">
+        <div class="bottom-area" style="height: auto; margin-top: auto; border: none; padding-top: 0;">
             <button class="share-btn" onclick="shareTrip()">旅の記憶をシェアする</button>
         </div>
     </div>

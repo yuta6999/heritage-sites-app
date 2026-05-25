@@ -4,10 +4,11 @@
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
     --accent-blue: #38bdf8;
+    --accent-red: #f43f5e;
     --border-color: #1e293b;
 }
 
-/* 全体リセット & エルゴノミクス設計 */
+/* 全体リセット */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -26,21 +27,20 @@ body {
     align-items: center;
 }
 
-/* iPhoneの画面にピタッと収まるコンテナ（1画面完結型） */
+/* アプリコンテナ */
 .app-container {
     width: 100%;
-    max-width: 430px; /* iPhone 15 Pro Max等の横幅を意識 */
+    max-width: 430px;
     height: 100vh;
-    height: 100dvh; /* スクロールバーやツールバーを除外した真の画面高 */
+    height: 100dvh;
     background-color: var(--card-bg);
     display: flex;
     flex-direction: column;
     padding: 24px 20px env(safe-area-inset-bottom, 24px) 20px;
-    overflow: hidden; /* スクロールを発生させない */
+    overflow: hidden;
     position: relative;
 }
 
-/* 進捗インジケータ */
 .progress-bar {
     font-size: 11px;
     font-weight: 700;
@@ -51,19 +51,18 @@ body {
     text-transform: uppercase;
 }
 
-/* メインコンテンツエリア（上下のバランスを自動調整） */
+/* 旅のメイン画面（上部コンテンツエリア） */
 .main-content {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    overflow-y: auto; /* 万が一テキストが溢れた場合のみ局所スクロール */
-    padding-bottom: 16px;
+    overflow-y: auto;
+    padding-bottom: 12px;
 }
 
-/* ヘッダー：和名・英名 */
 .heritage-header {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .heritage-title {
@@ -83,25 +82,24 @@ body {
     word-break: break-all;
 }
 
-/* 備考・ストーリー */
 .heritage-remarks {
     font-size: 15px;
-    line-height: 1.65;
+    line-height: 1.6;
     color: #cbd5e1;
     margin-bottom: 24px;
     text-align: justify;
 }
 
-/* 属性カード（Meta Grid） */
+/* メタデータグリッド */
 .meta-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     background-color: rgba(2, 6, 23, 0.4);
     border: 1px solid var(--border-color);
-    padding: 16px;
+    padding: 18px;
     border-radius: 12px;
-    margin-top: auto; /* コンテンツが少ない時は下部に押し下げる */
+    margin-top: auto;
 }
 
 .meta-item {
@@ -123,38 +121,52 @@ body {
     color: var(--text-primary);
 }
 
-/* ボトムエリア（親指タッチゾーン） */
+/* ボトム・操作エリア（高さを180pxに完全固定） */
 .bottom-area {
+    height: 180px; 
     margin-top: 16px;
     border-top: 1px solid var(--border-color);
-    padding-top: 20px;
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
 }
 
 .zone-label {
     font-size: 11px;
     color: var(--text-secondary);
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     text-align: center;
     letter-spacing: 0.05em;
+    flex-shrink: 0;
 }
 
-/* ハッシュタグコンテナ */
+/* タグコンテナ：溢れたらスクロール */
 .tags-container {
+    flex: 1;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
-    max-height: 150px;
+    align-content: flex-start;
+    gap: 8px;
     overflow-y: auto;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+}
+.tags-container::-webkit-scrollbar {
+    width: 4px;
+}
+.tags-container::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 2px;
 }
 
-/* タップしやすい大きめのボタン (最小ターゲット44px確保) */
 .tag-btn {
     background: rgba(56, 189, 248, 0.06);
     color: var(--accent-blue);
     border: 1px solid rgba(56, 189, 248, 0.2);
-    padding: 11px 16px;
-    border-radius: 22px;
+    padding: 12px 16px;
+    border-radius: 24px;
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
@@ -169,17 +181,50 @@ body {
     transform: scale(0.96);
 }
 
-/* 振り返り画面のスタイル */
+/* 10個目に表示するゴール専用ボタン */
+.goal-btn {
+    background: linear-gradient(135deg, var(--accent-blue), #0284c7);
+    color: var(--bg-color);
+    border: none;
+    padding: 16px;
+    border-radius: 28px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+    transition: all 0.2s ease;
+    margin-top: 8px;
+}
+
+.goal-btn:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
+
+/* 振り返り画面用 */
 .history-list {
     list-style: none;
     width: 100%;
 }
 
 .history-item {
-    padding: 14px 12px;
+    padding: 14px 10px;
     border-bottom: 1px solid var(--border-color);
     font-size: 14px;
     line-height: 1.4;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.history-flag {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.history-content {
+    flex: 1;
 }
 
 .history-name {
@@ -190,7 +235,7 @@ body {
 .history-tag {
     color: var(--accent-blue);
     font-size: 12px;
-    margin-left: 8px;
+    margin-left: 6px;
 }
 
 .share-btn {
